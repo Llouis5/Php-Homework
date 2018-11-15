@@ -33,7 +33,7 @@ Name: <input type="text" name="name">
 <?php
 	$filename = 'friends.txt';
 	$nameFilter = NULL;
-	$name="";
+	$name=NULL;
 	$file = fopen("friends.txt","r");
 	$array  = array();
 	while(!feof($file))	
@@ -41,18 +41,13 @@ Name: <input type="text" name="name">
 		array_push($array,fgets($file));
 	}
 	fclose($file);
-	if(empty($_POST['name']) && empty($_POST['namefilter']))
+	
+	if(isset($_POST['name']))//Adds name if not empty
 	{
-			foreach ($array as $current)
-			{
-				echo "<li>".$current."</li>";
-			}
-	}
-	if(isset($_POST['name']))
-	{
-		$name = $_POST['name'];
-		if($name!=="")
+		
+		if(!empty($_POST['name']))
 		{
+			$name = $_POST['name'];
 			$file = fopen("$filename", "a+");
 			array_push($array,$name);
 			fwrite($file, PHP_EOL."$name" );
@@ -63,10 +58,10 @@ Name: <input type="text" name="name">
 			}
 		}
 	}
-	if (isset($_POST['nameFilter'])) 
+	if (isset($_POST['nameFilter'])) //Displays names with filter if activated
 	{
 		$nameFilter = $_POST['nameFilter'];
-		if($nameFilter==="")
+		if(empty($nameFilter))
 		{
 			foreach ($array as $current)
 			{
@@ -82,6 +77,12 @@ Name: <input type="text" name="name">
 				}		
 			}
 		}
+	}else if(empty($_POST['name']) && empty($_POST['nameFilter']))//If not activated, initialize the page with the list of friends
+	{
+		foreach ($array as $current)
+			{
+				echo "<li>".$current."</li>";
+			}
 	}
 ?>
 <form action="index.php" method="post">
